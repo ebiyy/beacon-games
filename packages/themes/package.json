@@ -14,7 +14,8 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "lint": "eslint src --ext .ts"
+    "lint": "eslint src --ext .ts",
+    "test": "echo \"No tests yet\""
   },
   "dependencies": {
     "@beacon-games/core": "workspace:*",
