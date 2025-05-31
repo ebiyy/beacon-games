@@ -17,7 +17,7 @@
     "@beacon-games/engine": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^20",
+    "@types/node": "^20.17.57",
     "typescript": "^5",
     "tsx": "^4.7.2",
     "eslint": "^8",
