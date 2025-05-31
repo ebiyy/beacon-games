@@ -146,3 +146,29 @@
   - 技術的負債の戦略的管理方針
   - 開発速度KPI設定（24時間以内のPRマージ等）
   - コスト最適化戦略（無料枠活用、ローカル開発優先）
+
+### 12. Push主体のコード品質管理システム（2025年6月1日追加）
+
+- [x] Quality Analysis on Pushワークフロー作成
+  - CodeQLセキュリティスキャン（脆弱性検出）
+  - SonarCloudコード品質分析（オプション）
+  - 変更サイズ可視化（XS/S/M/Lカテゴリ）
+  - dependency-cruiserによる循環依存検出
+  - CodeScene API v2によるリスク分析（オプション）
+- [x] SonarCloud設定
+  - sonar-project.properties作成
+  - プロジェクト設定（除外パターン、テスト設定等）
+- [x] 依存関係分析設定
+  - dependency-cruiser設定ファイル自動生成
+  - 依存関係グラフのSVG出力（api-deps.svg、web-deps.svg）
+  - 循環依存の警告表示
+- [x] GitHub Step Summary統合
+  - push毎に品質レポートを自動生成
+  - 変更サイズ、リスクスコア、循環依存を可視化
+  - 大規模変更（500行以上）への警告機能
+- [x] CodeQLワークフロー修正
+  - 無効なクエリパラメータを修正
+  - JavaScriptプロジェクト用に最適化（Autobuild削除）
+- [x] シークレット管理
+  - 必要なシークレットのドキュメント作成
+  - continue-on-errorによる段階的導入対応
