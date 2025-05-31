@@ -1,0 +1,368 @@
+name: Quality Analysis on Push
+on: 
+  push:
+    branches: [ main, develop ]
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  codeql-analysis:
+    name: CodeQL Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript, typescript
+          queries: security-and-quality
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:javascript"
+
+  code-quality:
+    name: Code Quality Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for better analysis
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: SonarCloud Scan
+        continue-on-error: true
+        uses: SonarSource/sonarcloud-github-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: .
+
+  change-analysis:
+    name: Change Size & Hotspot Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Analyze changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v45
+        with:
+          include_all_old_new_renamed_files: true
+
+      - name: Calculate change metrics
+        id: metrics
+        run: |
+          # Get additions and deletions from git
+          STATS=$(git diff --shortstat ${{ github.event.before }}...${{ github.sha }} 2>/dev/null || echo "0 files changed")
+          
+          # Parse the stats
+          if [[ $STATS =~ ([0-9]+)\ file.*changed ]]; then
+            FILES_CHANGED=${BASH_REMATCH[1]}
+          else
+            FILES_CHANGED=0
+          fi
+          
+          if [[ $STATS =~ ([0-9]+)\ insertion ]]; then
+            ADDITIONS=${BASH_REMATCH[1]}
+          else
+            ADDITIONS=0
+          fi
+          
+          if [[ $STATS =~ ([0-9]+)\ deletion ]]; then
+            DELETIONS=${BASH_REMATCH[1]}
+          else
+            DELETIONS=0
+          fi
+          
+          TOTAL=$((ADDITIONS + DELETIONS))
+          
+          # Determine size category
+          if [ $TOTAL -lt 10 ]; then
+            SIZE="XS"
+            EMOJI="🟢"
+          elif [ $TOTAL -lt 100 ]; then
+            SIZE="S"
+            EMOJI="🟡"
+          elif [ $TOTAL -lt 500 ]; then
+            SIZE="M"
+            EMOJI="🟠"
+          else
+            SIZE="L"
+            EMOJI="🔴"
+          fi
+          
+          # Output metrics
+          echo "files_changed=$FILES_CHANGED" >> $GITHUB_OUTPUT
+          echo "additions=$ADDITIONS" >> $GITHUB_OUTPUT
+          echo "deletions=$DELETIONS" >> $GITHUB_OUTPUT
+          echo "total=$TOTAL" >> $GITHUB_OUTPUT
+          echo "size=$SIZE" >> $GITHUB_OUTPUT
+          echo "emoji=$EMOJI" >> $GITHUB_OUTPUT
+
+      - name: Generate change summary
+        run: |
+          cat >> $GITHUB_STEP_SUMMARY << EOF
+          ## 📊 Change Analysis Summary
+          
+          ### 📏 Change Size: ${{ steps.metrics.outputs.emoji }} **${{ steps.metrics.outputs.size }}**
+          
+          | Metric | Value |
+          |--------|-------|
+          | Files Changed | **${{ steps.metrics.outputs.files_changed }}** |
+          | Lines Added | **+${{ steps.metrics.outputs.additions }}** |
+          | Lines Deleted | **-${{ steps.metrics.outputs.deletions }}** |
+          | Total Changes | **${{ steps.metrics.outputs.total }}** |
+          
+          EOF
+          
+          if [ ${{ steps.metrics.outputs.total }} -gt 500 ]; then
+            echo "### ⚠️ Large Change Detected" >> $GITHUB_STEP_SUMMARY
+            echo "Consider breaking this into smaller commits for easier review and rollback." >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # List changed files
+          echo "### 📁 Changed Files" >> $GITHUB_STEP_SUMMARY
+          echo "| File | Change Type |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|-------------|" >> $GITHUB_STEP_SUMMARY
+          
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            if [[ " ${{ steps.changed-files.outputs.added_files }} " =~ " $file " ]]; then
+              echo "| $file | ➕ Added |" >> $GITHUB_STEP_SUMMARY
+            elif [[ " ${{ steps.changed-files.outputs.deleted_files }} " =~ " $file " ]]; then
+              echo "| $file | ➖ Deleted |" >> $GITHUB_STEP_SUMMARY
+            elif [[ " ${{ steps.changed-files.outputs.renamed_files }} " =~ " $file " ]]; then
+              echo "| $file | 📝 Renamed |" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "| $file | ✏️ Modified |" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+
+      - name: Install jq
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: sudo apt-get update && sudo apt-get install -y jq bc
+
+      - name: CodeScene Delta Analysis
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        continue-on-error: true
+        env:
+          CODESCENE_PAT: ${{ secrets.CODESCENE_PAT }}
+          CODESCENE_PROJECT_ID: ${{ secrets.CODESCENE_PROJECT_ID }}
+        run: |
+          if [ -z "$CODESCENE_PAT" ] || [ -z "$CODESCENE_PROJECT_ID" ]; then
+            echo "⏭️ CodeScene設定がありません。スキップします。"
+            exit 0
+          fi
+          
+          # CodeScene API v2でDelta分析結果を取得
+          curl -sSL -H "Authorization: Bearer $CODESCENE_PAT" \
+            "https://api.codescene.io/v2/projects/$CODESCENE_PROJECT_ID/delta-analyses/latest" \
+            -o delta.json || exit 0
+          
+          # 結果をJob Summaryに出力
+          echo "### 🔍 CodeScene Delta Analysis" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # リスクスコアとコード健全性を表示
+          if [ -f delta.json ]; then
+            RISK_SCORE=$(jq -r '.summary.risk_score // "N/A"' delta.json)
+            CODE_HEALTH=$(jq -r '.summary.code_health // "N/A"' delta.json)
+            HOTSPOT_COUNT=$(jq -r '.summary.hotspot_count // 0' delta.json)
+            
+            echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+            echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+            echo "| Risk Score | **$RISK_SCORE** |" >> $GITHUB_STEP_SUMMARY
+            echo "| Code Health | **$CODE_HEALTH** |" >> $GITHUB_STEP_SUMMARY
+            echo "| Hotspot Count | **$HOTSPOT_COUNT** |" >> $GITHUB_STEP_SUMMARY
+            
+            # 高リスクの変更を警告
+            if [ "$RISK_SCORE" != "N/A" ] && [ $(echo "$RISK_SCORE > 7" | bc -l) -eq 1 ]; then
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "⚠️ **高リスクの変更が検出されました**" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "⚠️ Delta分析結果を取得できませんでした" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  dependency-analysis:
+    name: Dependency & Architecture Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install analysis tools
+        run: |
+          pnpm add -D -w dependency-cruiser
+          sudo apt-get update && sudo apt-get install -y graphviz
+
+      - name: Create dependency-cruiser config
+        run: |
+          cat > .dependency-cruiser.json << 'EOF'
+          {
+            "forbidden": [
+              {
+                "name": "no-circular",
+                "severity": "warn",
+                "comment": "Circular dependencies make the code hard to understand and maintain",
+                "from": {},
+                "to": {
+                  "circular": true
+                }
+              },
+              {
+                "name": "no-orphans",
+                "severity": "info",
+                "comment": "Orphan modules are unused and should be removed",
+                "from": {
+                  "orphan": true,
+                  "pathNot": "\\.d\\.ts$|node_modules|__tests__|test"
+                },
+                "to": {}
+              }
+            ],
+            "options": {
+              "doNotFollow": {
+                "path": "node_modules"
+              },
+              "tsPreCompilationDeps": true,
+              "tsConfig": {
+                "fileName": "./tsconfig.json"
+              },
+              "enhancedResolveOptions": {
+                "exportsFields": ["exports"],
+                "conditionNames": ["import", "require", "node", "default"]
+              },
+              "reporterOptions": {
+                "dot": {
+                  "theme": {
+                    "graph": {
+                      "rankdir": "TD",
+                      "splines": "ortho"
+                    }
+                  }
+                }
+              }
+            }
+          }
+          EOF
+
+      - name: Run dependency analysis
+        id: depcruise
+        run: |
+          # Run dependency-cruiser and capture results
+          npx dependency-cruiser apps packages --config .dependency-cruiser.json --output-type err-long > dep-results.txt 2>&1 || true
+          
+          # Check for circular dependencies
+          if grep -q "no-circular" dep-results.txt; then
+            echo "has_circular=true" >> $GITHUB_OUTPUT
+            echo "## ⚠️ Circular Dependencies Detected" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            grep -A 3 "no-circular" dep-results.txt >> $GITHUB_STEP_SUMMARY || true
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          else
+            echo "has_circular=false" >> $GITHUB_OUTPUT
+            echo "## ✅ No Circular Dependencies" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Generate dependency graph
+        if: always()
+        run: |
+          # Generate visual dependency graph for key modules
+          npx dependency-cruiser apps/web/app --config .dependency-cruiser.json --output-type dot | dot -T svg > web-deps.svg || true
+          npx dependency-cruiser apps/api/src --config .dependency-cruiser.json --output-type dot | dot -T svg > api-deps.svg || true
+          
+          echo "### 📊 Dependency Graphs Generated" >> $GITHUB_STEP_SUMMARY
+          echo "Check artifacts for visual dependency graphs" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload dependency graphs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-graphs
+          path: |
+            web-deps.svg
+            api-deps.svg
+          retention-days: 7
+
+  summary:
+    name: Quality Summary
+    runs-on: ubuntu-latest
+    needs: [codeql-analysis, code-quality, change-analysis, dependency-analysis]
+    if: always()
+    steps:
+      - name: Generate overall summary
+        run: |
+          echo "# 🎯 Push Quality Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Author:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "## 📋 Check Results" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          
+          # Add job statuses
+          if [ "${{ needs.codeql-analysis.result }}" == "success" ]; then
+            echo "| CodeQL Security | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| CodeQL Security | ❌ Failed |" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ "${{ needs.code-quality.result }}" == "success" ]; then
+            echo "| Code Quality | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| Code Quality | ❌ Failed |" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ "${{ needs.change-analysis.result }}" == "success" ]; then
+            echo "| Change Analysis | ✅ Completed |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| Change Analysis | ⚠️ Issues |" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ "${{ needs.dependency-analysis.result }}" == "success" ]; then
+            echo "| Dependencies | ✅ Healthy |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| Dependencies | ⚠️ Warnings |" >> $GITHUB_STEP_SUMMARY
+          fi
