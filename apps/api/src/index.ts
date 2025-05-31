@@ -25,7 +25,7 @@ async function start() {
 
     server.register(async function (fastify) {
       fastify.get('/ws', { websocket: true }, (socket, _request) => {
-        socket.on('message', (message) => {
+        socket.on('message', (message: Buffer | ArrayBuffer | Buffer[]) => {
           const data = JSON.parse(message.toString())
           server.log.info({ msg: 'Received message', data })
 
