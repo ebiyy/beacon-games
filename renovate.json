@@ -45,6 +45,31 @@
       "description": "Pin GitHub Actions",
       "matchManagers": ["github-actions"],
       "pinDigests": true
+    },
+    {
+      "description": "Hold Next.js to version 14.x",
+      "matchPackageNames": ["next", "eslint-config-next"],
+      "allowedVersions": "^14.0.0"
+    },
+    {
+      "description": "Hold React to version 18.x",
+      "matchPackagePatterns": ["^react", "^@types/react"],
+      "allowedVersions": "^18.0.0"
+    },
+    {
+      "description": "Hold Tailwind CSS to version 3.x",
+      "matchPackageNames": ["tailwindcss"],
+      "allowedVersions": "^3.0.0"
+    },
+    {
+      "description": "Hold ESLint to version 8.x",
+      "matchPackageNames": ["eslint"],
+      "allowedVersions": "^8.0.0"
+    },
+    {
+      "description": "Hold TypeScript ESLint to version 7.x",
+      "matchPackagePatterns": ["^@typescript-eslint"],
+      "allowedVersions": "^7.0.0"
     }
   ],
   "postUpdateOptions": ["pnpmDedupe"],
