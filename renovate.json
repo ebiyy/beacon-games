@@ -48,7 +48,7 @@
     }
   ],
   "postUpdateOptions": ["pnpmDedupe"],
-  "prConcurrentLimit": 3,
+  "prConcurrentLimit": 10,
   "prCreation": "immediate",
   "rangeStrategy": "bump",
   "semanticCommits": "enabled",
