@@ -1,0 +1,47 @@
+name: "CodeQL"
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # 毎週月曜日の朝9時に実行（新しい脆弱性DBでスキャン）
+    - cron: '0 0 * * 1'
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'javascript-typescript' ]
+        # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript-typescript', 'python', 'ruby' ]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # CodeQL ツールの初期化
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: ${{ matrix.language }}
+        # クエリを限定して高速化（高・重大のみ）
+        queries: security-severity
+
+    # 自動ビルド（JavaScriptは不要だが、念のため実行）
+    - name: Autobuild
+      uses: github/codeql-action/autobuild@v3
+
+    # CodeQL 分析の実行
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
+      with:
+        category: "/language:${{matrix.language}}"

@@ -1,0 +1,24 @@
+[
+  {
+    "name": "Web App Bundle",
+    "path": "apps/web/.next/static/chunks/pages/*.js",
+    "limit": "150 KB",
+    "gzip": true
+  },
+  {
+    "name": "Web App CSS",
+    "path": "apps/web/.next/static/css/*.css",
+    "limit": "50 KB"
+  },
+  {
+    "name": "Total Client Bundle",
+    "path": [
+      "apps/web/.next/static/chunks/framework*.js",
+      "apps/web/.next/static/chunks/main*.js",
+      "apps/web/.next/static/chunks/pages/_app*.js",
+      "apps/web/.next/static/chunks/webpack*.js"
+    ],
+    "limit": "300 KB",
+    "gzip": true
+  }
+]
