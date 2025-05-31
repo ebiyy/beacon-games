@@ -33,12 +33,8 @@ jobs:
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
-        # クエリを限定して高速化（高・重大のみ）
-        queries: security-severity
-
-    # 自動ビルド（JavaScriptは不要だが、念のため実行）
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v3
+        # セキュリティと品質の両方をチェック
+        queries: security-and-quality
 
     # CodeQL 分析の実行
     - name: Perform CodeQL Analysis
