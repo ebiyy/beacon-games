@@ -85,3 +85,35 @@
   - WebSocket統合
   - ヘルスチェックエンドポイント
   - TypeScript型定義修正
+
+### 7. 依存関係管理
+
+- [x] Renovate設定
+  - GitHub Actions対応（自動作成されたissue, PR対応）
+  - PR制限を10に緩和（個別管理のため）
+  - メジャーバージョンアップデート制限追加
+- [x] Dependabot対応
+  - pnpm/action-setup v4へのアップデート
+- [x] turbo.json修正
+  - `pipeline`から`tasks`への移行（Turbo v2対応）
+- [x] .gitignore更新
+  - api/distをignoreに追加
+  - dist/も追加（全パッケージ共通）
+
+### 8. 依存関係更新
+
+- [x] @types/node → 20.17.57
+- [x] autoprefixer → 10.4.21
+- [x] eslint-config-next → 14.2.29
+- [x] eslint → 8.57.1（全パッケージ）
+- [x] Next.js → 14.2.29（14.x系最新版に固定）
+- [x] GitHub Actions依存関係のピン留め（セキュリティ強化）
+
+### 9. バージョン戦略
+
+- [x] 主要パッケージのバージョン固定設定
+  - Next.js: 14.x系に固定（v15は後日検討）
+  - React: 18.x系を維持（v19は待機）
+  - Tailwind CSS: 3.x系を維持（v4は待機）
+  - ESLint: 8.x系を維持（v9は待機）
+  - TypeScript ESLint: 7.x系を維持（v8は待機）
