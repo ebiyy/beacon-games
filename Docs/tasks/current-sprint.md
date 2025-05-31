@@ -6,14 +6,14 @@
 
 - [x] プロジェクト基盤構築
 - [x] 開発環境セットアップ
-- [ ] CI/CD基本設定 (GitHub Actions) ← 次はここ
+- [x] CI/CD基本設定 (GitHub Actions)
 
 ### 今週の目標
 
-- [ ] GitHub Actions CI/CDパイプライン構築
-- [ ] MapLibre GL JS地図表示PoC
-- [ ] Next.js基本画面実装
-- [ ] WebSocketリアルタイム通信デモ
+- [x] GitHub Actions CI/CDパイプライン構築
+- [ ] MapLibre GL JS地図表示PoC ← 次はここ
+- [ ] Next.js基本画面実装（進行中）
+- [ ] WebSocketリアルタイム通信デモ（基本実装済み）
 
 ### ブロッカー
 
@@ -24,3 +24,6 @@
 - モノレポ構造完成
 - pnpmに統一
 - 基本的な開発環境構築完了
+- CI/CDパイプライン構築完了（lint、test、type check）
+- Renovate自動更新設定完了
+- Next.js App Router基本実装完了

@@ -49,3 +49,39 @@
 - [x] tsup設定
   - 各パッケージのビルド設定
   - CommonJS/ESM両対応
+
+### 4. CI/CD設定
+
+- [x] GitHub Actions設定
+  - CI ワークフロー（lint、test、build）
+  - 3つの並列ジョブ構成
+  - pnpm/action-setup v3使用
+- [x] Renovate設定
+  - 自動依存関係更新
+  - monorepo対応
+  - automerge設定（minor/patch）
+- [x] Dependabot設定
+  - GitHub Actions専用（pnpm非対応のため）
+- [x] Husky + lint-staged
+  - pre-commitフック
+  - 自動フォーマット
+
+### 5. Next.jsアプリケーション基本実装
+
+- [x] App Router設定
+  - app/page.tsx（ホームページ）
+  - app/layout.tsx（レイアウト）
+  - app/globals.css（グローバルスタイル）
+- [x] Tailwind CSS統合
+  - PostCSS設定
+  - autoprefixer追加
+- [x] ビルド設定修正
+  - UIパッケージのexports追加
+  - エントリーポイントファイル作成
+
+### 6. APIサーバー実装
+
+- [x] Fastifyサーバー初期実装
+  - WebSocket統合
+  - ヘルスチェックエンドポイント
+  - TypeScript型定義修正
