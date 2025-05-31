@@ -15,12 +15,15 @@ NERVEは単なるゲームプラットフォームではありません。これ
 ### 核心的デザイン原則
 
 1. **Cognitive Load Minimization（認知負荷最小化）**
+
    - 情報は見つけるものではなく、必要な時に現れるもの
 
 2. **Anticipatory Design（予測的デザイン）**
+
    - ユーザーの次の行動を予測し、先回りする
 
 3. **Calm Technology（静かなテクノロジー）**
+
    - 重要でない時は背景に溶け込み、必要な時だけ前面に
 
 4. **Resilient Interface（回復力のあるインターフェース）**
@@ -46,56 +49,66 @@ NERVEは単なるゲームプラットフォームではありません。これ
 ### 2.2 カラーシステム
 
 #### Primary Palette（主要色）
+
 ```scss
 // Operational States
-$nerve-blue: #0A84FF;      // 平常状態
-$nerve-orange: #FF9500;    // 警戒状態  
-$nerve-red: #FF3B30;       // 緊急状態
-$nerve-green: #30D158;     // 成功状態
+$nerve-blue: #0a84ff; // 平常状態
+$nerve-orange: #ff9500; // 警戒状態
+$nerve-red: #ff3b30; // 緊急状態
+$nerve-green: #30d158; // 成功状態
 
 // Neural Grays（神経系グレー）
-$gray-900: #0A0E1A;        // 深層
-$gray-700: #1C1F2E;        // 中層
-$gray-500: #48495F;        // 表層
-$gray-300: #8E8E93;        // 補助
-$gray-100: #F2F2F7;        // 背景
+$gray-900: #0a0e1a; // 深層
+$gray-700: #1c1f2e; // 中層
+$gray-500: #48495f; // 表層
+$gray-300: #8e8e93; // 補助
+$gray-100: #f2f2f7; // 背景
 ```
 
 #### Semantic Colors（意味的色彩）
+
 ```scss
 // Service Colors（サービス識別色）
-$police: #005AFF;
-$fire: #FF3B30;
-$medical: #FFFFFF;
-$special: #AF52DE;
+$police: #005aff;
+$fire: #ff3b30;
+$medical: #ffffff;
+$special: #af52de;
 
 // Gradient System（グラデーション）
-$neural-gradient: linear-gradient(135deg, #0A84FF 0%, #5E5CE6 100%);
-$alert-gradient: linear-gradient(135deg, #FF9500 0%, #FF3B30 100%);
+$neural-gradient: linear-gradient(135deg, #0a84ff 0%, #5e5ce6 100%);
+$alert-gradient: linear-gradient(135deg, #ff9500 0%, #ff3b30 100%);
 ```
 
 ### 2.3 タイポグラフィ
 
 ```scss
 // Font Stack
-$font-primary: 'Inter', -apple-system, sans-serif;
+$font-primary:
+  'Inter',
+  -apple-system,
+  sans-serif;
 $font-mono: 'JetBrains Mono', monospace;
 $font-jp: 'Noto Sans JP', sans-serif;
 
 // Type Scale (8pt Grid)
 $type-scales: (
-  'display': 40px,   // 巨大情報表示
-  'headline': 32px,  // 見出し
-  'title': 24px,     // タイトル
-  'body': 16px,      // 本文
-  'caption': 14px,   // キャプション
-  'micro': 12px      // 極小表示
+  'display': 40px,
+  // 巨大情報表示
+  'headline': 32px,
+  // 見出し
+  'title': 24px,
+  // タイトル
+  'body': 16px,
+  // 本文
+  'caption': 14px,
+  // キャプション
+  'micro': 12px, // 極小表示
 );
 
 // 可読性最適化
-letter-spacing: -0.02em;  // タイトル
-letter-spacing: 0;        // 本文
-line-height: 1.5;         // 標準
+letter-spacing: -0.02em; // タイトル
+letter-spacing: 0; // 本文
+line-height: 1.5; // 標準
 ```
 
 ## 3. インタラクションデザイン
@@ -103,15 +116,16 @@ line-height: 1.5;         // 標準
 ### 3.1 マイクロインタラクション
 
 #### 神経反射システム
+
 ```javascript
 // ホバーエフェクト例
 .nerve-unit {
   transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  
+
   &:hover {
     transform: scale(1.02);
     box-shadow: 0 0 20px rgba(10, 132, 255, 0.3);
-    
+
     // 神経パルスアニメーション
     &::after {
       animation: pulse 1s infinite;
@@ -127,6 +141,7 @@ line-height: 1.5;         // 標準
 ```
 
 #### フィードバックシステム
+
 - **触覚的フィードバック**：Web Vibration APIによる振動
 - **聴覚的フィードバック**：状況別サウンドデザイン
 - **視覚的フィードバック**：60fps アニメーション
@@ -136,18 +151,18 @@ line-height: 1.5;         // 標準
 ```typescript
 // 状況適応型インターフェース
 interface AdaptiveUIState {
-  stressLevel: 'calm' | 'normal' | 'intense' | 'critical';
-  userExpertise: 'beginner' | 'intermediate' | 'expert';
-  incidentDensity: number;
+  stressLevel: 'calm' | 'normal' | 'intense' | 'critical'
+  userExpertise: 'beginner' | 'intermediate' | 'expert'
+  incidentDensity: number
 }
 
 // UIの自動調整
 function adaptInterface(state: AdaptiveUIState) {
   if (state.stressLevel === 'critical') {
     // 重要情報のみ表示
-    hideNonEssentialUI();
-    enlargeCriticalControls();
-    increaseContrast();
+    hideNonEssentialUI()
+    enlargeCriticalControls()
+    increaseContrast()
   }
 }
 ```
@@ -178,6 +193,7 @@ NERVE Interface Hierarchy
 ### 4.2 ユーザーフロー最適化
 
 #### 緊急対応フロー（3秒以内）
+
 ```
 1. 事件発生 → 視覚的アラート（0.1秒）
 2. 自動ズーム → 事件現場（0.5秒）
@@ -191,27 +207,35 @@ NERVE Interface Hierarchy
 ## 5. アクセシビリティ＆インクルーシブデザイン
 
 ### 5.1 視覚的アクセシビリティ
+
 ```scss
 // 高コントラストモード
 .high-contrast-mode {
-  --primary: #FFFFFF;
+  --primary: #ffffff;
   --background: #000000;
   --border-width: 3px;
-  
+
   // WCAG AAA準拠
-  --contrast-ratio: 7:1;
+  --contrast-ratio: 7: 1;
 }
 
 // 色覚多様性対応
 .colorblind-safe {
   // 形状とパターンで識別
-  .police { border-style: solid; }
-  .fire { border-style: dashed; }
-  .medical { border-style: dotted; }
+  .police {
+    border-style: solid;
+  }
+  .fire {
+    border-style: dashed;
+  }
+  .medical {
+    border-style: dotted;
+  }
 }
 ```
 
 ### 5.2 認知的アクセシビリティ
+
 - **プログレッシブディスクロージャー**：情報を段階的に表示
 - **コンテキストヘルプ**：その場で学習可能
 - **取り消し可能なアクション**：3秒間のUNDO猶予
@@ -219,31 +243,33 @@ NERVE Interface Hierarchy
 ## 6. モーションデザイン言語
 
 ### 6.1 アニメーション原則
+
 ```javascript
 // イージング関数ライブラリ
 const NERVE_EASINGS = {
   // 神経伝達を模したイージング
   neural: 'cubic-bezier(0.4, 0.0, 0.2, 1)',
-  
+
   // 緊急時の即座の反応
   urgent: 'cubic-bezier(0.0, 0.0, 0.2, 1)',
-  
+
   // 落ち着いた状態遷移
-  calm: 'cubic-bezier(0.4, 0.0, 0.6, 1)'
-};
+  calm: 'cubic-bezier(0.4, 0.0, 0.6, 1)',
+}
 
 // 状況別アニメーション速度
 const DURATIONS = {
-  instant: 100,    // 緊急操作
-  fast: 200,       // 通常操作
-  smooth: 300,     // 状態遷移
-  dramatic: 500    // 重要な変化
-};
+  instant: 100, // 緊急操作
+  fast: 200, // 通常操作
+  smooth: 300, // 状態遷移
+  dramatic: 500, // 重要な変化
+}
 ```
 
 ### 6.2 シグネチャーアニメーション
 
 #### "Neural Ripple"（神経波紋）
+
 ```css
 @keyframes neural-ripple {
   0% {
@@ -264,13 +290,17 @@ const DURATIONS = {
 ## 7. プラットフォーム別デザイン適応
 
 ### 7.1 レスポンシブ戦略
+
 ```scss
 // Breakpoints（神経節点）
 $neural-breakpoints: (
-  'synapse': 320px,   // 最小接続
-  'ganglion': 768px,  // 中間結節
-  'cortex': 1024px,   // 大脳皮質
-  'cerebrum': 1440px  // 全脳
+  'synapse': 320px,
+  // 最小接続
+  'ganglion': 768px,
+  // 中間結節
+  'cortex': 1024px,
+  // 大脳皮質
+  'cerebrum': 1440px, // 全脳
 );
 
 // 適応型グリッドシステム
@@ -278,7 +308,7 @@ $neural-breakpoints: (
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: var(--neural-gap);
-  
+
   @media (min-width: map-get($neural-breakpoints, 'cortex')) {
     grid-template-columns: repeat(12, 1fr);
   }
@@ -286,6 +316,7 @@ $neural-breakpoints: (
 ```
 
 ### 7.2 入力方式最適化
+
 - **マウス**：精密な操作、ホバー状態活用
 - **タッチ**：44px最小タップ領域、ジェスチャー対応
 - **キーボード**：完全なショートカット体系
@@ -294,6 +325,7 @@ $neural-breakpoints: (
 ## 8. ダークパターン回避宣言
 
 ### 倫理的デザインコミットメント
+
 1. **NO** 意図的な混乱や誤操作誘導
 2. **NO** 中毒性を高める心理的トリック
 3. **NO** ユーザーの判断を曇らせる要素
@@ -303,6 +335,7 @@ $neural-breakpoints: (
 ## 9. デザインシステムガバナンス
 
 ### 9.1 コンポーネントライブラリ
+
 ```typescript
 // Storybookによる管理
 export default {
@@ -312,20 +345,21 @@ export default {
     variant: {
       control: {
         type: 'select',
-        options: ['primary', 'urgent', 'ghost']
-      }
+        options: ['primary', 'urgent', 'ghost'],
+      },
     },
     state: {
       control: {
-        type: 'select', 
-        options: ['calm', 'alert', 'critical']
-      }
-    }
-  }
-};
+        type: 'select',
+        options: ['calm', 'alert', 'critical'],
+      },
+    },
+  },
+}
 ```
 
 ### 9.2 デザイントークン
+
 ```json
 {
   "nerve-tokens": {
@@ -349,12 +383,14 @@ export default {
 ## 10. 測定可能なデザイン成功指標
 
 ### 10.1 パフォーマンスKPI
+
 - **反応時間**：ユーザーアクション → システム応答 < 100ms
 - **認知負荷**：重要決定までの時間 < 3秒
 - **エラー率**：誤操作率 < 0.1%
 - **学習曲線**：基本操作習得 < 5分
 
 ### 10.2 感性的KPI
+
 - **SUS（System Usability Scale）**：> 85点
 - **NPS（Net Promoter Score）**：> 70
 - **美的満足度**：5段階中4.5以上
@@ -362,16 +398,19 @@ export default {
 ## 11. デザインの進化ロードマップ
 
 ### Phase 1: Foundation（0-3ヶ月）
+
 - コアコンポーネント確立
 - デザインシステム1.0
 - 基本的なアニメーション
 
 ### Phase 2: Enhancement（3-6ヶ月）
+
 - AI支援UI（予測的インターフェース）
 - 高度なビジュアライゼーション
 - カスタマイズシステム
 
 ### Phase 3: Innovation（6-12ヶ月）
+
 - AR/VR対応準備
 - 音声UI統合
 - 感情認識対応UI
@@ -387,8 +426,8 @@ NERVEのデザインは、**人間の能力を拡張し、ストレス下でも�
 ---
 
 **"Design is not just what it looks like. Design is how it works."**  
-*- In the context of NERVE, design is how it saves.*
+_- In the context of NERVE, design is how it saves._
 
-**承認署名**: _________________  
-**CDO**: _________________  
-**日付**: _________________
+**承認署名**: **\*\*\*\***\_**\*\*\*\***  
+**CDO**: **\*\*\*\***\_**\*\*\*\***  
+**日付**: **\*\*\*\***\_**\*\*\*\***

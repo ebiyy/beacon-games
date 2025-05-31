@@ -3,11 +3,13 @@
 ## 推奨プロジェクトフォルダ名
 
 ### メインプロジェクト
+
 ```
 beacon-games/
 ```
 
 ### 理由
+
 1. ブランド名を明確に反映
 2. GitHub組織名としても使用可能
 3. npm スコープ `@beacon` と一貫性
@@ -64,6 +66,7 @@ beacon-games/
 ## Git リポジトリ戦略
 
 ### モノレポ構造（推奨）
+
 ```bash
 # メインリポジトリ
 github.com/beacon-games/beacon
@@ -75,6 +78,7 @@ github.com/beacon-games/community-themes   # コミュニティテーマ
 ```
 
 ### 開発環境セットアップ
+
 ```bash
 # ghq を使用した場合
 ghq get beacon-games/beacon
@@ -88,6 +92,7 @@ cd beacon
 ## パッケージ命名規則
 
 ### npm パッケージ
+
 ```json
 {
   "name": "@beacon/core",
@@ -97,6 +102,7 @@ cd beacon
 ```
 
 ### Docker イメージ
+
 ```
 beacon-games/game-server:latest
 beacon-games/web-app:latest
@@ -104,6 +110,7 @@ beacon-games/api:latest
 ```
 
 ### Kubernetes リソース
+
 ```yaml
 namespace: beacon-production
 deployment: beacon-game-server
@@ -113,6 +120,7 @@ service: beacon-api
 ## ファイル命名規則
 
 ### TypeScript/JavaScript
+
 ```typescript
 // コンポーネント: PascalCase
 GameMap.tsx
@@ -131,6 +139,7 @@ gameConstants.ts
 ```
 
 ### 設定ファイル
+
 ```
 beacon.config.ts        # メイン設定
 beacon.theme.json       # テーマ設定
@@ -166,14 +175,17 @@ npx lerna init
 ## 推奨事項
 
 1. **フォルダ名は `beacon-games` を使用**
+
    - ブランドと一致
    - 将来の組織名として使用可能
 
 2. **モノレポ構造を採用**
+
    - パッケージ間の依存関係管理が容易
    - 統一的なビルド・テスト環境
 
 3. **早期に GitHub 組織を作成**
+
    - `beacon-games` 組織を確保
    - チーム開発の準備
 
