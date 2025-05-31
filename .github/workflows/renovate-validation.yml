@@ -1,6 +1,7 @@
 name: Renovate Validation
 
 on:
+  workflow_dispatch:
   pull_request:
     paths:
       - 'renovate.json'
