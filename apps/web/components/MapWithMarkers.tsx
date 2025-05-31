@@ -77,7 +77,7 @@ export default function MapWithMarkers() {
   useEffect(() => {
     if (!mapContainer.current || map.current) return
 
-    map.current = new maplibregl.Map({
+    const mapInstance = new maplibregl.Map({
       container: mapContainer.current,
       style: {
         version: 8,
@@ -102,21 +102,20 @@ export default function MapWithMarkers() {
       zoom: zoom,
     })
 
+    map.current = mapInstance
+
     // Add navigation control
-    map.current.addControl(new maplibregl.NavigationControl(), 'top-right')
+    mapInstance.addControl(new maplibregl.NavigationControl(), 'top-right')
 
     // Update coordinates on move
-    map.current.on('move', () => {
-      if (!map.current) return
-      setLng(parseFloat(map.current.getCenter().lng.toFixed(4)))
-      setLat(parseFloat(map.current.getCenter().lat.toFixed(4)))
-      setZoom(parseFloat(map.current.getZoom().toFixed(2)))
+    mapInstance.on('move', () => {
+      setLng(parseFloat(mapInstance.getCenter().lng.toFixed(4)))
+      setLat(parseFloat(mapInstance.getCenter().lat.toFixed(4)))
+      setZoom(parseFloat(mapInstance.getZoom().toFixed(2)))
     })
 
     // Add markers when map loads
-    map.current.on('load', () => {
-      if (!map.current) return
-
+    mapInstance.on('load', () => {
       // Add emergency unit markers
       units.forEach((unit) => {
         const el = document.createElement('div')
@@ -150,7 +149,7 @@ export default function MapWithMarkers() {
                 </div>
               `),
           )
-          .addTo(map.current)
+          .addTo(mapInstance)
       })
 
       // Add incident markers
@@ -191,7 +190,7 @@ export default function MapWithMarkers() {
                 </div>
               `),
           )
-          .addTo(map.current)
+          .addTo(mapInstance)
       })
     })
 
