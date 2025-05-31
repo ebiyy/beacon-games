@@ -1,0 +1,59 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "group:monorepos",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    ":automergeMinor"
+  ],
+  "timezone": "Asia/Tokyo",
+  "schedule": ["after 10pm and before 5am on every weekday", "every weekend"],
+  "labels": ["dependencies"],
+  "packageRules": [
+    {
+      "description": "Automatically merge minor and patch-level updates",
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true
+    },
+    {
+      "description": "Disable automerge for major updates",
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    },
+    {
+      "description": "Group ESLint packages",
+      "matchPackagePatterns": ["eslint"],
+      "groupName": "ESLint packages"
+    },
+    {
+      "description": "Group React packages",
+      "matchPackagePatterns": ["^react", "^@types/react"],
+      "groupName": "React packages"
+    },
+    {
+      "description": "Group TypeScript packages",
+      "matchPackagePatterns": ["typescript", "^@typescript-eslint"],
+      "groupName": "TypeScript packages"
+    },
+    {
+      "description": "Group Tailwind CSS packages",
+      "matchPackagePatterns": ["tailwind"],
+      "groupName": "Tailwind CSS packages"
+    },
+    {
+      "description": "Pin GitHub Actions",
+      "matchManagers": ["github-actions"],
+      "pinDigests": true
+    }
+  ],
+  "postUpdateOptions": ["pnpmDedupe"],
+  "prConcurrentLimit": 3,
+  "prCreation": "immediate",
+  "rangeStrategy": "bump",
+  "semanticCommits": "enabled",
+  "commitMessagePrefix": "chore(deps):",
+  "commitMessageAction": "update",
+  "commitMessageTopic": "{{depName}}",
+  "commitMessageExtra": "to {{newVersion}}"
+}
