@@ -206,7 +206,7 @@ importers:
         specifier: ^7
         version: 7.18.0(eslint@8.57.1)(typescript@5.8.3)
       autoprefixer:
-        specifier: ^10.4.19
+        specifier: ^10.4.21
         version: 10.4.21(postcss@8.5.4)
       eslint:
         specifier: ^8
