@@ -1,0 +1,21 @@
+{
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "cSpell.words": [
+    "beacon",
+    "ebiyy",
+    "fastify",
+    "maplibre",
+    "monorepo",
+    "pnpm",
+    "tailwindcss",
+    "tsup",
+    "turborepo",
+    "websocket"
+  ]
+}
