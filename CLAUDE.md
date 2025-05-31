@@ -17,6 +17,35 @@ This is a real-time emergency response simulation game platform project that ena
 - **Model A (NERVE)**: Ambitious unicorn-focused approach with neural/nervous system branding
 - **Model B (MetroHelix)**: Pragmatic implementation-focused approach with urban DNA analysis theme
 
+## TypeScript コーディング規約
+
+### 型安全性の厳格なルール
+
+- **非nullアサーション演算子 (!) の使用禁止**
+- **as によるキャスト禁止**
+- **アーリーリターンでのnullチェックも避ける**
+- 代わりに以下の方法を使用:
+  - 作成直後のインスタンスは変数に保存して使用
+  - Optional chainingの活用
+  - 型ガードの実装
+  - デフォルト値の設定
+
+例:
+
+```typescript
+// ❌ 悪い例
+if (!map.current) return
+map.current.doSomething() // 型エラー
+
+// ❌ 悪い例
+map.current!.doSomething() // 非nullアサーション禁止
+
+// ✅ 良い例
+const mapInstance = new Map()
+map.current = mapInstance
+mapInstance.doSomething() // 型安全
+```
+
 ## Core Architecture Principles
 
 ### Technical Foundation
