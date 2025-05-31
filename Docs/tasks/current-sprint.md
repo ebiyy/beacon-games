@@ -9,6 +9,8 @@
 - [x] CI/CD基本設定 (GitHub Actions)
 - [x] 依存関係管理の最適化（Renovate/Dependabot対応）
 - [x] バージョン戦略の策定と実装
+- [x] GitHub Actions拡張設定（バンドルサイズ監視、PRラベラー、CodeQL）
+- [x] 開発効率化ガイドライン追加（CLAUDE.md更新）
 
 ### 今週の目標
 
@@ -33,3 +35,12 @@
   - Renovate/Dependabot連携確立
   - バージョン戦略策定（安定性重視）
   - 自動PR処理フロー確立
+- GitHub Actions拡張完了（2025/05/31 追加）
+  - バンドルサイズ監視（size-limit-action）
+  - PRサイズラベラー（XS〜XL自動分類）
+  - CodeQLセキュリティスキャン（高・重大のみ）
+  - Renovate週1バッチ更新に最適化
+- プロフィット重視の開発ガイドライン策定
+  - MVP優先アプローチ
+  - 技術的負債の戦略的管理
+  - 開発速度KPI設定（24時間以内のPRマージ等）
